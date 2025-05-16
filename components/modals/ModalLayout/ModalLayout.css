@@ -1,0 +1,108 @@
+.modal-content-container {
+  position: absolute;
+
+  box-shadow: 24;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* .modal-header {
+  background-color: #f8f9fa;
+} */
+
+.modal-footer {
+  /* background-color: #f8f9fa; */
+  font-size: 0.7rem;
+  color: #6c757d;
+}
+
+.steps-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between steps and dots */
+}
+
+.step {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000; /* Change to your desired color */
+}
+
+.dots {
+  color: rgb(191, 187, 187);
+}
+
+.steps-container .step {
+  font-size: 13px;
+  font-weight: normal;
+  color: rgb(191, 187, 187);
+}
+
+.steps-container .step.active {
+  font-weight: bold;
+  color: black;
+}
+.steps-container .step.complete {
+  font-weight: bold;
+  color: green;
+}
+
+.modal-header,
+.modal-footer {
+  z-index: 10; /* Ensure the header/footer stay on top of scrollable content */
+}
+
+.modal-header {
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+  border-top: 1px solid #ddd;
+}
+
+.modal-body {
+  background-color: #f8f9fa;
+  /* background-color: #f8f9fa; */
+  overflow-y: scroll; /* Enable scrolling */
+  flex: 1; /* Take up the remaining space */
+  filter: none !important;
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+.modal-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for other browsers */
+.modal-body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.607); /* Blur effect */
+  z-index: 1100; /* Higher than the modal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 550px) {
+  .modal-content-container {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0px !important;
+  }
+  .privacy-div {
+    width: min-content;
+  }
+}
