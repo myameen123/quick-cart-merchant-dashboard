@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
@@ -10,12 +10,38 @@ function RiskCards() {
   const [lowRiskSelection, setLowRiskSelection] = useState('');
   const [mediumRiskSelection, setMediumRiskSelection] = useState('');
   const [highRiskSelection, setHighRiskSelection] = useState('');
+  const [isUpdating, startTransition] = useTransition();
+  const [savedRisk, setSaveRisk] =  useState(null);
 
+
+  useEffect(()=>{
+      const fetchThreshold = async ()=>{
+          try{
+              const res = await fetch("/api/admin/checkout");
+              const json = await res.json()
+              console.log(json.data)
+              setSaveRisk(json.data)
+          }catch(err){
+              toast.error("Failed to load thresholds")
+              console.error(err)
+          }
+      }
+      fetchThreshold()
+    },[])
+
+    useEffect(() => {
+        if (savedRisk && savedRisk.length > 0) {
+          setLowRiskSelection(savedRisk[0].lowRiskSelection);
+          setMediumRiskSelection(savedRisk[0].mediumRiskSelection);
+          setHighRiskSelection(savedRisk[0].highRiskSelection);
+        }
+      }, [savedRisk]);
   // Options for each risk level
   const options = [
     'COD blocking',
     'COD Fees',
     'COD Prompt',
+    'Partial COD',
     'No Intervention'
   ];
 
@@ -37,14 +63,47 @@ function RiskCards() {
   };
 
   // Function to handle submit button click
+  // const handleSubmit = () => {
+  //   console.log({
+  //     lowRiskSelection,
+  //     mediumRiskSelection,
+  //     highRiskSelection
+  //   });
+  //   toast.success("Risk settings applied successfully!")
+  // };
+
   const handleSubmit = () => {
-    console.log({
-      lowRiskSelection,
-      mediumRiskSelection,
-      highRiskSelection
-    });
-    toast.success("Risk settings applied successfully!")
+    startTransition(async()=>{
+      const payload = {
+    id:"68269c4ab55b7d6ba84a28f6",
+    lowRiskSelection,
+    mediumRiskSelection,
+    highRiskSelection
   };
+
+  console.log(payload);
+
+  try {
+    const res = await fetch('/api/admin/checkout', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Update failed');
+
+    toast.success('Risk settings applied successfully!');
+  } catch (err) {
+    toast.error(err.message || 'Something went wrong');
+  }
+    })  
+  
+};
+
 
   // Card component for each risk level
   const RiskCard = ({ title, riskLevel, selectedOption, titleColor }) => (
@@ -101,7 +160,7 @@ function RiskCards() {
         className="mt-8 px-8 py-2"
         size="lg"
         onClick={handleSubmit}
-        disabled={!lowRiskSelection || !mediumRiskSelection || !highRiskSelection}
+        disabled={!lowRiskSelection || !mediumRiskSelection || !highRiskSelection ||isUpdating}
       >
         Apply Risk Settings
       </Button>
